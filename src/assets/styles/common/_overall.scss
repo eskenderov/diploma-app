@@ -1,0 +1,71 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+ul,
+li,
+a {
+  text-decoration: none;
+  list-style: none;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.container {
+  max-width: 1358px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0px 15px;
+}
+
+.page {
+  padding: 25px;
+}
+.title {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 15px;
+}
+.desc {
+  padding: 0 10px;
+  text-align: justify;
+  margin-bottom: 40px;
+}
+.devider {
+  width: 100%;
+  font-weight: 700;
+  text-align: center;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.btn {
+  width: max-content;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: 0;
+  background-color: rgb(60, 60, 50);
+  cursor: pointer;
+  box-shadow: $shadow;
+  color: white;
+}
+
+.card {
+  padding: 25px 15px;
+  min-height: 250px;
+  box-shadow: $shadow;
+  border-radius: 15px;
+}

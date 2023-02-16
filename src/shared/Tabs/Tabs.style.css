@@ -1,0 +1,21 @@
+.tabs {
+  width: -moz-max-content;
+  width: max-content;
+  margin: 0 auto;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.tabs .tab {
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: background-color 0.2s ease-in-out;
+}
+.tabs .tab.active {
+  background-color: black;
+}/*# sourceMappingURL=Tabs.style.css.map */
