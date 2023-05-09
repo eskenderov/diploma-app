@@ -6,6 +6,9 @@
 @import './components/header';
 @import './components/sitebar';
 @import './components/search';
+@import './components/footer';
+@import './components/accordions';
+@import './components/tabs';
 // product
 @import './components/user/user-card';
 @import './components/user/user-list';
@@ -17,3 +20,5 @@
 
 // ----- shared ------
 @import './shared/layout';
+@import './shared/field';
+@import './shared/button';

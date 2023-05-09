@@ -1,13 +1,18 @@
 .layout {
-  display: grid;
-  grid-template-columns: 300px 1fr;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   height: 100vh;
+  &__row {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+  }
 
   &__main {
     box-shadow: $shadow;
-    box-sizing: 20px;
+    box-sizing: 16px 3px 3px 16px;
     margin: 0 20px;
-    border-radius: 20px;
     margin: 10px 5px;
+    border-radius: 16px 3px 3px 16px;
   }
 }

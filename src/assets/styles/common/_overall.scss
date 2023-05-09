@@ -6,6 +6,10 @@
 
 body {
   font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  color: $text;
+  background-color: $background;
 }
 
 ul,
@@ -29,6 +33,18 @@ img {
 
 .page {
   padding: 25px;
+  height: 605px;
+  overflow: auto;
+  background-color: $light;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    max-height: 10%;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $text;
+    border-radius: 5px;
+  }
 }
 .title {
   width: 100%;
@@ -38,7 +54,8 @@ img {
 .desc {
   padding: 0 10px;
   text-align: justify;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
+  text-indent: 1em;
 }
 .devider {
   width: 100%;
@@ -61,6 +78,10 @@ img {
   cursor: pointer;
   box-shadow: $shadow;
   color: white;
+
+  &:disabled {
+    background-color: grey;
+  }
 }
 
 .card {
@@ -68,4 +89,18 @@ img {
   min-height: 250px;
   box-shadow: $shadow;
   border-radius: 15px;
+}
+
+.error-text {
+  color: red;
+}
+
+.circle {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: $warning;
+  margin-right: 8px;
 }

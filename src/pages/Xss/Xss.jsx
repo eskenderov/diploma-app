@@ -1,20 +1,21 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Tabs } from 'components/Tabs';
-import { InjectionsContent } from './InjectionsContent';
-import { Accordions } from 'components/Accordions';
+import { XssContent } from './XssContent';
 import { pagesData } from 'services/data';
-const Injections = () => {
+import { Accordions } from 'components/Accordions';
+
+const Xss = () => {
   const [tab, setTab] = useState('unsafe');
-  const content = pagesData['injection'];
+  const content = pagesData['xss'];
   return (
     <div className="page injections">
       <h1 className="title">{content.title}</h1>
       <Accordions details={content.details} сonsequences={content.сonsequences}>
         <Tabs activeTab={tab} onChange={setTab} />
-        <InjectionsContent tab={tab} />
+        <XssContent tab={tab} />
       </Accordions>
     </div>
   );
 };
 
-export default Injections;
+export default Xss;

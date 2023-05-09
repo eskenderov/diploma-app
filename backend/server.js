@@ -15,31 +15,36 @@ const connection = mysql.createConnection({
   database: 'thesis-bd',
 });
 
-// routers
-const productRouter = require('./routes/productRouter');
-app.use('/api/products', productRouter);
-
-// middleware
 app.use(cors(corsOption));
-
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// testing api
+// routers
+const productRouter = require('./routes/productRouter');
+const userRouter = require('./routes/userRouter');
+const commentRouter = require('./routes/commentRouter');
+
+app.use('/api/users', userRouter);
+app.use('/api/comments', commentRouter);
+app.use('/api/products', productRouter);
+
 app.get('/', (req, res) => {
   res.json({ message: 'hello from api' });
 });
 
-app.get('/users', (req, res) => {
-  const { search } = req.query;
-  const query = `SELECT * FROM users WHERE name LIKE '%${search}%'`;
+// unsafe of sql injections
+app.post('/users/login', (req, res) => {
+  const { username, password } = req.query;
+  const query = `SELECT * FROM users WHERE username='${username}'`;
   connection.query(query, (error, results) => {
     if (error) {
-      console.error(error);
-      res.status(500).send('Internal server error');
+      res.status(500).send('Ошибка сервера');
     } else {
-      res.json(results);
+      if (results.length && results[0].password === Number(password)) {
+        res.status(200).send(results);
+      } else {
+        res.status(401).send('Неверный юзернейм пользователя или пароль');
+      }
     }
   });
 });

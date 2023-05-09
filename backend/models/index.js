@@ -26,6 +26,8 @@ db.sequelize = sequelize;
 
 db.products = require('./productModel')(sequelize, DataTypes);
 db.reviews = require('./reviewModel')(sequelize, DataTypes);
+db.users = require('./userModel')(sequelize, DataTypes);
+db.comments = require('./commentModel')(sequelize, DataTypes);
 
 db.sequelize
   .sync({ force: false })

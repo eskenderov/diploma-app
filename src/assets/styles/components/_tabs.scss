@@ -1,0 +1,29 @@
+.tabs {
+  width: max-content;
+  margin: 0 auto;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 20px;
+  background-color: $background;
+  border-radius: 8px;
+
+  .tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    height: 40px;
+    padding: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    color: $text;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-in-out;
+    &.active {
+      background-color: $text;
+      color: $light;
+    }
+  }
+}
