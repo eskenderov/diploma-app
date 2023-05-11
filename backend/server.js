@@ -35,17 +35,11 @@ app.get('/', (req, res) => {
 // unsafe of sql injections
 app.post('/users/login', (req, res) => {
   const { username, password } = req.query;
-  const query = `SELECT * FROM users WHERE username='${username}'`;
+  const query = `SELECT * FROM users WHERE username='${username}' AND password='${password}'`;
   connection.query(query, (error, results) => {
-    if (error) {
-      res.status(500).send('Ошибка сервера');
-    } else {
-      if (results.length && results[0].password === Number(password)) {
-        res.status(200).send(results);
-      } else {
-        res.status(401).send('Неверный юзернейм пользователя или пароль');
-      }
-    }
+    if (error) res.status(500).send('Ошибка сервера');
+    else if (results.length) res.status(200).send(results);
+    else res.status(401).send('Неверный юзернейм пользователя или пароль');
   });
 });
 

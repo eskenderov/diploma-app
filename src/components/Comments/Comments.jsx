@@ -19,32 +19,38 @@ export const Comments = ({ tab }) => {
   });
   // const hasError = error.author.length > 0 || error.text.length > 0;
   const hasError = false;
-  const onInputChange = ({ nameField, value }) => {
+  const onInputChange = ({ nameField, value, validate }) => {
     setValues((prevState) => ({
       ...prevState,
       [nameField]: value,
     }));
-    switch (nameField) {
-      case 'author':
-        setError((prevError) => ({
-          ...prevError,
-          [nameField]: !validateAuthor(value)
-            ? 'Имя автора не может содержать знаки!'
-            : '',
-        }));
-        break;
-      case 'text':
-        setError((prevError) => ({
-          ...prevError,
-          [nameField]: !validateText(value)
-            ? `Текст комментария не может содержать знаки: <, >, ', ", &.`
-            : '',
-        }));
-        break;
+    setError((prevError) => ({
+      ...prevError,
+      [nameField]: '',
+    }));
 
-      default:
-        break;
-    }
+    if (validate)
+      switch (nameField) {
+        case 'author':
+          setError((prevError) => ({
+            ...prevError,
+            [nameField]: !validateAuthor(value)
+              ? 'Имя автора не может содержать знаки!'
+              : '',
+          }));
+          break;
+        case 'text':
+          setError((prevError) => ({
+            ...prevError,
+            [nameField]: !validateText(value)
+              ? `Текст комментария не может содержать знаки: <, >, ', ", &.`
+              : '',
+          }));
+          break;
+
+        default:
+          break;
+      }
   };
 
   const fetchData = useCallback(async () => {
@@ -77,8 +83,29 @@ export const Comments = ({ tab }) => {
     }
     try {
       const { author, text } = values;
-      const { data } = await postNewComment({ author, text });
-      addComment(data);
+      let validForm = true;
+      if (!author.length) {
+        validForm = false;
+        setError((prevError) => ({
+          ...prevError,
+          author: 'Имя автора не должно быть пустым!',
+        }));
+      }
+      if (!text.length) {
+        validForm = false;
+        setError((prevError) => ({
+          ...prevError,
+          text: 'Текст не должен быть пустым!',
+        }));
+      }
+
+      if (validForm) {
+        const { data } = await postNewComment({ author, text });
+        addComment(data);
+      } else {
+        return false;
+      }
+
       onClear();
     } catch (error) {
       console.log(error);
@@ -101,42 +128,8 @@ export const Comments = ({ tab }) => {
   return (
     <div className="comments">
       <Container>
-        <Title>Комментарии</Title>
-        {!loading ? (
-          <List>
-            {tab === 'unsafe' &&
-              comments.map(({ id, author, text }) => (
-                // <iframe srcdoc="<script>alert('XSS attack!');</script>"  style="position: absolute;width:0;height:0;border:0;"></iframe>
-                <Item key={id}>
-                  <Author
-                    dangerouslySetInnerHTML={{
-                      __html: author,
-                    }}
-                  />
-                  <Text
-                    dangerouslySetInnerHTML={{
-                      __html: text,
-                    }}
-                  />
-                </Item>
-              ))}
-            {tab === 'safe' &&
-              comments.map(({ id, author, text }) => (
-                <Item key={id}>
-                  <Author
-                    dangerouslySetInnerHTML={{
-                      __html: sanitize(author),
-                    }}
-                  />
-                  <Text>{text}</Text>
-                </Item>
-              ))}
-          </List>
-        ) : (
-          <p className="loading">Loading</p>
-        )}
-
         <Form>
+          <Title>Добавить комментарий</Title>
           {tab === 'unsafe' && (
             <UiField
               title="Автор"
@@ -146,6 +139,7 @@ export const Comments = ({ tab }) => {
                 onInputChange({
                   nameField: 'author',
                   value,
+                  validate: false,
                 })
               }
               autoComplete="one-time-code"
@@ -160,6 +154,7 @@ export const Comments = ({ tab }) => {
                 onInputChange({
                   nameField: 'author',
                   value,
+                  validate: true,
                 })
               }
             />
@@ -177,6 +172,7 @@ export const Comments = ({ tab }) => {
                 onInputChange({
                   nameField: 'text',
                   value,
+                  validate: false,
                 })
               }
             />
@@ -191,6 +187,7 @@ export const Comments = ({ tab }) => {
                 onInputChange({
                   nameField: 'text',
                   value,
+                  validate: true,
                 })
               }
             />
@@ -204,13 +201,58 @@ export const Comments = ({ tab }) => {
             type="submit"
           />
         </Form>
+
+        <CommentsListWrapper>
+          <Title>Комментарии</Title>
+          {!loading ? (
+            <List>
+              {tab === 'unsafe' &&
+                comments.map(({ id, author, text }) => (
+                  // <iframe srcdoc="<script>alert('XSS attack!');</script>"  style="position: absolute;width:0;height:0;border:0;"></iframe>
+                  <Item key={id}>
+                    <Author
+                      dangerouslySetInnerHTML={{
+                        __html: author,
+                      }}
+                    />
+                    <Text
+                      dangerouslySetInnerHTML={{
+                        __html: text,
+                      }}
+                    />
+                  </Item>
+                ))}
+              {tab === 'safe' &&
+                comments.map(({ id, author, text }) => (
+                  <Item key={id}>
+                    <Author
+                      dangerouslySetInnerHTML={{
+                        __html: sanitize(author),
+                      }}
+                    />
+                    <Text>{text}</Text>
+                  </Item>
+                ))}
+            </List>
+          ) : (
+            <p className="loading">Loading</p>
+          )}
+        </CommentsListWrapper>
       </Container>
     </div>
   );
 };
 
+const CommentsListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 const Container = styled.div`
-  width: 330px;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
   padding: 20px 10px 10px;
 `;
 const Title = styled.h3`
@@ -219,46 +261,36 @@ const Title = styled.h3`
 `;
 const List = styled.ul`
   display: flex;
+  width: 300px;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 24px;
   max-height: 324px;
   overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    max-height: 10%;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #171c34;
+    border-radius: 5px;
+  }
 `;
 const Item = styled.li`
   padding: 12px;
-  background-color: aliceblue;
+  background-color: #f5f5f7;
   border-radius: 8px;
 `;
 const Author = styled.div`
   font-size: 17px;
   margin-bottom: 4px;
+  font-weight: 700;
 `;
 const Text = styled.p`
   font-size: 14px;
 `;
-const Label = styled.p`
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 5px;
-`;
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-`;
-const Textarea = styled.textarea`
-  margin-bottom: 8px;
-  padding: 8px;
-  border: 1px solid #000;
-  font-size: inherit;
-  resize: none;
-`;
-const Input = styled.input`
-  margin-bottom: 8px;
-  padding: 8px;
-  font-size: inherit;
-  resize: none;
-`;
-const Button = styled.button`
-  width: 100%;
 `;
