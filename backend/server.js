@@ -3,6 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
 const mysql = require('mysql2');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
 
 const corsOption = {
   origin: 'https://localhost:8081',
@@ -15,11 +17,21 @@ const connection = mysql.createConnection({
   database: 'thesis-bd',
 });
 
+// Генерация CSRF-токена и его добавление в cookie
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    sameSite: 'strict', // Ограничение отправки куки только на том же домене
+  },
+});
+
+app.use(cookieParser());
 app.use(cors(corsOption));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(csrfProtection); // Защищаем все маршруты от CSRF-атакy
 
-// routers
+// Маршрутизация
 const productRouter = require('./routes/productRouter');
 const userRouter = require('./routes/userRouter');
 const commentRouter = require('./routes/commentRouter');
@@ -27,6 +39,11 @@ const commentRouter = require('./routes/commentRouter');
 app.use('/api/users', userRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/products', productRouter);
+
+// Маршрут для предоставления CSRF-токена
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 app.get('/', (req, res) => {
   res.json({ message: 'hello from api' });

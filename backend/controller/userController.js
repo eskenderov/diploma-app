@@ -19,6 +19,30 @@ const loginUser = async (req, res) => {
   }
 };
 
+// Защищен от CSRF атаки
+const editSafeUser = async (req, res) => {
+  if(!req.cookies.csrfToken) return res.status(403).json({ error: 'CSRF токен отсутствует!' });
+  if (req.cookies.csrfToken !== req.headers['x-csrf-token']) return res.status(403).json({ error: 'Неверный CSRF токен' });
+  // Обработка запроса на изменение профиля
+  // ...
+  // (Код для изменения пароля пользователя)
+  // ...
+  res.json({ message: 'Профиль успешно изменен!' });
+  res.status(200);
+};
+
+// Уязвим от CSRF атаки
+const editUnSafeUser = async (req, res) => {
+  // Обработка запроса на изменение профиля
+  // ...
+  // (Код для изменения пароля пользователя)
+  // ...
+  res.json({ message: 'Профиль успешно изменен!' });
+  res.status(200);
+};
+
 module.exports = {
   loginUser,
+  editSafeUser,
+  editUnSafeUser,
 };

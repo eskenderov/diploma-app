@@ -9,6 +9,8 @@
 @import './components/footer';
 @import './components/accordions';
 @import './components/tabs';
+@import './components/browser-window';
+
 // product
 @import './components/user/user-card';
 @import './components/user/user-list';
@@ -17,6 +19,7 @@
 
 // ----- pages ------
 @import './pages/injections';
+@import './pages/csrf';
 
 // ----- shared ------
 @import './shared/layout';

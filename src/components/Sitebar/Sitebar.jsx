@@ -10,6 +10,14 @@ const dataList = [
     title: 'XSS',
     to: '/xss',
   },
+  {
+    title: 'CSRF',
+    to: '/csrf',
+  },
+  {
+    title: 'Clickjacking',
+    to: '/clickjacking',
+  },
 ];
 const Sitebar = () => {
   return (
