@@ -30,7 +30,3 @@ export const editUser = ({ type, username, password, token = undefined }) => {
     }
   );
 };
-
-let token = "";
-
-module.exports = token;

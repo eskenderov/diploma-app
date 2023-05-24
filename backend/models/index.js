@@ -24,8 +24,6 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.products = require('./productModel')(sequelize, DataTypes);
-db.reviews = require('./reviewModel')(sequelize, DataTypes);
 db.users = require('./userModel')(sequelize, DataTypes);
 db.comments = require('./commentModel')(sequelize, DataTypes);
 

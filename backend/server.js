@@ -5,7 +5,6 @@ const app = express();
 const mysql = require('mysql2');
 const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
-const session = require('express-session');
 
 const corsOption = {
   origin: 'https://localhost:8081',
@@ -32,14 +31,8 @@ app.use(cors(corsOption));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(
-  session({
-    secret: 'my-secret-key',
-    saveUninitialized: true,
-  })
-);
+
 // Маршрутизация
-const productRouter = require('./routes/productRouter');
 const userRouter = require('./routes/userRouter');
 const commentRouter = require('./routes/commentRouter');
 
@@ -52,18 +45,9 @@ app.get('/api/csrf-token', csrfProtection, (req, res) => {
 
 app.use('/api/users', userRouter);
 app.use('/api/comments', commentRouter);
-app.use('/api/products', productRouter);
 
 app.get('/', (req, res) => {
   res.json({ message: `hello from api - ${req.cookies.csrfToken}` });
-});
-app.get('/set-cookie', (req, res) => {
-  res.cookie('csrfToken', 'test');
-  res.json({ message: `set cookie` });
-});
-
-app.get('/test', function (req, res, next) {
-  console.log('Cookies', req.cookies);
 });
 
 // unsafe of sql injections

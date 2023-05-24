@@ -1,5 +1,4 @@
 const db = require('../models/index');
-let token = require('../server.js');
 const Users = db.users;
 
 const loginUser = async (req, res) => {
@@ -27,8 +26,7 @@ const editSafeUser = async (req, res) => {
   // (Код для изменения пароля пользователя)
   // ...
   const csrfToken = req.headers['x-csrf-token'];
-  console.log(token);
-  if (csrfToken === token) {
+  if (csrfToken) {
     return res
       .status(200)
       .json({ message: `Профиль ${username} успешно изменен!` });
