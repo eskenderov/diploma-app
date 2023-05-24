@@ -5,6 +5,7 @@ const app = express();
 const mysql = require('mysql2');
 const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
 const corsOption = {
   origin: 'https://localhost:8081',
@@ -17,41 +18,58 @@ const connection = mysql.createConnection({
   database: 'thesis-bd',
 });
 
-// Генерация CSRF-токена и его добавление в cookie
 const csrfProtection = csrf({
+  // Опция secure: true гарантирует, что кука будет установлена только для HTTPS-соединений.
+  // В случае работы на localhost без HTTPS, следует закомментировать или установить в false.
+  // sameSite: 'lax',
   cookie: {
-    httpOnly: true,
-    sameSite: 'strict', // Ограничение отправки куки только на том же домене
+    secure: false,
+    sameSite: true
   },
 });
 
-app.use(cookieParser());
 app.use(cors(corsOption));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(csrfProtection); // Защищаем все маршруты от CSRF-атакy
-
+app.use(cookieParser());
+app.use(
+  session({
+    secret: 'my-secret-key',
+    saveUninitialized: true,
+  })
+);
 // Маршрутизация
 const productRouter = require('./routes/productRouter');
 const userRouter = require('./routes/userRouter');
 const commentRouter = require('./routes/commentRouter');
 
+// Маршрут для предоставления CSRF-токена
+app.get('/api/csrf-token', csrfProtection, (req, res) => {
+  const csrfToken = req.csrfToken();
+  res.cookie('csrfToken', "test");
+  res.json({ csrfToken });
+});
+
 app.use('/api/users', userRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/products', productRouter);
 
-// Маршрут для предоставления CSRF-токена
-app.get('/api/csrf-token', (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
+app.get('/', (req, res) => {
+  res.json({ message: `hello from api - ${req.cookies.csrfToken}` });
+});
+app.get('/set-cookie', (req, res) => {
+  res.cookie('csrfToken', 'test');
+  res.json({ message: `set cookie` });
 });
 
-app.get('/', (req, res) => {
-  res.json({ message: 'hello from api' });
+app.get('/test', function (req, res, next) {
+  console.log('Cookies', req.cookies);
 });
 
 // unsafe of sql injections
 app.post('/users/login', (req, res) => {
   const { username, password } = req.query;
+  res.status(200).json({ csrfTokenSession: req.session });
   const query = `SELECT * FROM users WHERE username='${username}' AND password='${password}'`;
   connection.query(query, (error, results) => {
     if (error) res.status(500).send('Ошибка сервера');

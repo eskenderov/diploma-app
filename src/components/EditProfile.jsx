@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { getCSRFToken } from 'services/api/token';
 import { editUser } from 'services/api/users';
 import { UiButton } from 'shared/ui/UiButton';
 import { UiField } from 'shared/ui/UiField';
@@ -20,15 +22,38 @@ export const EditProfile = ({ tab, disabledToken }) => {
     setError(null);
   };
 
+  const clearState = () => {
+    setValues({
+      new_username: '',
+      prev_password: '',
+      new_password: '',
+    });
+    setError(null);
+    setResult(null);
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (disabledToken) {
-        localStorage.removeItem('csrfToken');
+      let token = undefined;
+      if (!disabledToken) {
+        token = await getCSRFToken();
       }
-      const { data } = await editUser({ type: tab });
-      setResult(data.message);
+
+      const { data } = await editUser({
+        type: tab,
+        username: values.new_password,
+        password: values.new_password,
+        token: token?.data.csrfToken,
+      });
+
+      if (data.message) toast.success(data.message, { autoClose: 3000 });
+
+      clearState();
     } catch (error) {
+      toast.error('Недопустимый токен CSRF', {
+        autoClose: 3000,
+      });
       console.log(error);
     }
   };
@@ -72,9 +97,10 @@ export const EditProfile = ({ tab, disabledToken }) => {
             }
             autoComplete="one-time-code"
           />
-          {result && <div className="text">{result}</div>}
+          {result && <div className="text success-text">{result}</div>}
           {error && <div className="error-text">{error}</div>}
           <UiButton label="Изменить" onClick={onSubmit} />
+          <div className="tab"></div>
         </div>
       </form>
     </div>

@@ -4,7 +4,7 @@ import { CsrfContent } from './CsrfContent';
 import { Accordions } from 'components/Accordions';
 import { pagesData } from 'services/data';
 const Injections = () => {
-  const [tab, setTab] = useState('unsafe');
+  const [tab, setTab] = useState('safe');
   const content = pagesData['csrf'];
   return (
     <main className="page csrf">

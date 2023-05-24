@@ -4,22 +4,8 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { getCSRFToken } from 'services/api/token';
-import { useEffect } from 'react';
 
 export const CsrfContent = ({ tab, list }) => {
-  useEffect(() => {
-    const getToken = async () => {
-      const { data } = await getCSRFToken();
-      localStorage.setItem('csrfToken', data.csrfToken);
-    };
-    if (tab === 'safe') getToken();
-    else if (tab === 'unsafe') {
-      const token = localStorage.getItem('csrfToken');
-      if (token) localStorage.removeItem('csrfToken');
-    }
-  }, [tab]);
-
   return (
     <div className="csrf-content">
       <BrowserWindow url="https://www.example.com/edit-profile">

@@ -1,3 +1,3 @@
 import { Axios } from 'services/axios/config';
 
-export const getCSRFToken = () => Axios.get('/api/csrf-token');
+export const getCSRFToken = async () => Axios.get('/api/csrf-token');

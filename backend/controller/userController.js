@@ -1,5 +1,5 @@
 const db = require('../models/index');
-
+let token = require('../server.js');
 const Users = db.users;
 
 const loginUser = async (req, res) => {
@@ -21,24 +21,30 @@ const loginUser = async (req, res) => {
 
 // Защищен от CSRF атаки
 const editSafeUser = async (req, res) => {
-  if(!req.cookies.csrfToken) return res.status(403).json({ error: 'CSRF токен отсутствует!' });
-  if (req.cookies.csrfToken !== req.headers['x-csrf-token']) return res.status(403).json({ error: 'Неверный CSRF токен' });
+  const { username } = req.body;
   // Обработка запроса на изменение профиля
   // ...
   // (Код для изменения пароля пользователя)
   // ...
-  res.json({ message: 'Профиль успешно изменен!' });
-  res.status(200);
+  const csrfToken = req.headers['x-csrf-token'];
+  console.log(token);
+  if (csrfToken === token) {
+    return res
+      .status(200)
+      .json({ message: `Профиль ${username} успешно изменен!` });
+  } else {
+    res.status(403).json({ error: 'Неверный CSRF токен' });
+  }
 };
 
 // Уязвим от CSRF атаки
 const editUnSafeUser = async (req, res) => {
+  const { username } = req.body;
   // Обработка запроса на изменение профиля
   // ...
   // (Код для изменения пароля пользователя)
   // ...
-  res.json({ message: 'Профиль успешно изменен!' });
-  res.status(200);
+  res.status(200).json({ message: `Профиль ${username} успешно изменен!` });
 };
 
 module.exports = {
