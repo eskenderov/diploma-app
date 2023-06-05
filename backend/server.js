@@ -6,10 +6,6 @@ const mysql = require('mysql2');
 const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 
-const corsOption = {
-  origin: 'https://localhost:8081',
-};
-
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -23,11 +19,11 @@ const csrfProtection = csrf({
   // sameSite: 'lax',
   cookie: {
     secure: false,
-    sameSite: true
+    sameSite: true,
   },
 });
 
-app.use(cors(corsOption));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -39,7 +35,7 @@ const commentRouter = require('./routes/commentRouter');
 // Маршрут для предоставления CSRF-токена
 app.get('/api/csrf-token', csrfProtection, (req, res) => {
   const csrfToken = req.csrfToken();
-  res.cookie('csrfToken', "test");
+  res.cookie('csrfToken', 'test');
   res.json({ csrfToken });
 });
 
@@ -53,7 +49,6 @@ app.get('/', (req, res) => {
 // unsafe of sql injections
 app.post('/users/login', (req, res) => {
   const { username, password } = req.query;
-  res.status(200).json({ csrfTokenSession: req.session });
   const query = `SELECT * FROM users WHERE username='${username}' AND password='${password}'`;
   connection.query(query, (error, results) => {
     if (error) res.status(500).send('Ошибка сервера');
@@ -62,7 +57,7 @@ app.post('/users/login', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 app.listen(PORT, function () {
   console.log('CORS-enabled web server listening on port 80');
 });

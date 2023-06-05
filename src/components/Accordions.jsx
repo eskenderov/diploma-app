@@ -33,7 +33,7 @@ export const Accordions = ({ details, сonsequences, children }) => {
         </AccordionDetails>
       </Accordion>
       {children && (
-        <Accordion>
+        <Accordion defaultExpanded={true}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <h3>Пример</h3>
           </AccordionSummary>

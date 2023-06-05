@@ -28,30 +28,29 @@ export const Comments = ({ tab }) => {
       ...prevError,
       [nameField]: '',
     }));
-
     if (validate)
       switch (nameField) {
         case 'author':
           setError((prevError) => ({
             ...prevError,
-            [nameField]: !validateAuthor(value)
-              ? 'Имя автора не может содержать знаки!'
-              : '',
+            [nameField]: !validateAuthor(value) ? 'Имя автора не может содержать знаки!' : '',
           }));
           break;
         case 'text':
           setError((prevError) => ({
             ...prevError,
-            [nameField]: !validateText(value)
-              ? `Текст комментария не может содержать знаки: <, >, ', ", &.`
-              : '',
+            [nameField]: !validateText(value) ? `Текст комментария не может содержать знаки: <, >, ', ", &.`: '',
           }));
           break;
-
         default:
           break;
       }
   };
+
+
+
+
+
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -203,19 +202,20 @@ export const Comments = ({ tab }) => {
         </Form>
 
         <CommentsListWrapper>
+        {/* <iframe srcdoc="<script>alert('XSS attack!');</script>"  style="position: absolute;width:0;height:0;border:0;"></iframe> */}
+
           <Title>Комментарии</Title>
           {!loading ? (
             <List>
               {tab === 'unsafe' &&
                 comments.map(({ id, author, text }) => (
-                  // <iframe srcdoc="<script>alert('XSS attack!');</script>"  style="position: absolute;width:0;height:0;border:0;"></iframe>
                   <Item key={id}>
                     <Author
                       dangerouslySetInnerHTML={{
                         __html: author,
                       }}
                     />
-                    <Text
+                    <Text 
                       dangerouslySetInnerHTML={{
                         __html: text,
                       }}
